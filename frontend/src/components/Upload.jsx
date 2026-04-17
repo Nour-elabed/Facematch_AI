@@ -204,7 +204,6 @@ const styles = {
     cursor: "pointer",
     marginBottom: "16px",
     minHeight: "200px",
-    display: "flex",
     alignItems: "center",
     justifyContent: "center",
     transition: "border-color 0.2s",
