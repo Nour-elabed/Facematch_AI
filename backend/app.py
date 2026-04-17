@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import shutil
 import os
 import logging
-from face_recognition_model import recognize_face
+from Facematch_AI.backend.face_recognition import recognize_face
 
 # Setup logging to see what's happening in the terminal
 logging.basicConfig(level=logging.INFO)
