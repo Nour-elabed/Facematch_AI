@@ -39,7 +39,7 @@ export default function Upload() {
 
   return (
     <div style={styles.container}>
-      <h1>🔥 FaceMatch AI</h1>
+      <h1>FaceMatch AI</h1>
 
       <input type="file" onChange={handleChange} />
 

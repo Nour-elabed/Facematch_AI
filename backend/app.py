@@ -15,7 +15,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 🌐 Updated CORS: Allows any origin for local development testing
+# Updated CORS: Allows any origin for local development testing
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -28,7 +28,7 @@ TEMP_FILE = "temp_upload.jpg"
 
 @app.get("/")
 def root():
-    return {"message": "FaceMatch AI backend is running ✅"}
+    return {"message": "FaceMatch AI backend is running"}
 
 @app.post("/recognize")
 async def recognize(file: UploadFile = File(...)):
