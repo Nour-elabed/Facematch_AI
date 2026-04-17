@@ -1,64 +1,84 @@
 from deepface import DeepFace
 import os
+import numpy as np
 
 DATASET_PATH = "dataset"
 
-known_images = []
+# Store precomputed embeddings instead of raw images
+known_embeddings = []
 known_names = []
 
+
+def get_embedding(image_path):
+    """Extract face embedding from an image."""
+    result = DeepFace.represent(
+        img_path=image_path,
+        model_name="Facenet",
+        enforce_detection=False
+    )
+    return np.array(result[0]["embedding"])
+
+
+def cosine_similarity(a, b):
+    """Calculate similarity between two embeddings."""
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+
 def load_dataset():
-    """Load all images from the dataset folder."""
-    global known_images, known_names
-    known_images = []
+    """Precompute embeddings for all dataset images at startup."""
+    global known_embeddings, known_names
+    known_embeddings = []
     known_names = []
-    
+
     if not os.path.exists(DATASET_PATH):
         os.makedirs(DATASET_PATH)
-        print(f"[FaceMatch AI] Created empty dataset folder at '{DATASET_PATH}'")
+        print("[FaceMatch AI] Created empty dataset folder")
         return
+
+    print("[FaceMatch AI] Loading Facenet model and computing embeddings...")
 
     for filename in os.listdir(DATASET_PATH):
         if filename.lower().endswith((".jpg", ".jpeg", ".png")):
-            known_images.append(os.path.join(DATASET_PATH, filename))
-            # Clean name: "angelina_jolie.jpg" → "Angelina Jolie"
+            path = os.path.join(DATASET_PATH, filename)
             name = os.path.splitext(filename)[0].replace("_", " ").title()
-            known_names.append(name)
+            try:
+                embedding = get_embedding(path)
+                known_embeddings.append(embedding)
+                known_names.append(name)
+                print(f"  [OK] {name}")
+            except Exception as e:
+                print(f"  [SKIP] {name} — {e}")
 
-    print(f"[FaceMatch AI] Loaded {len(known_images)} images from dataset:")
-    for name in known_names:
-        print(f"  - {name}")
+    print(f"[FaceMatch AI] Ready! {len(known_embeddings)} faces loaded.")
 
 
 def recognize_face(image_path: str) -> str:
     """
-    Compare the uploaded image against every image in the dataset.
-    Returns the best match name + confidence, or "Unknown person".
+    Compare uploaded image against precomputed embeddings.
+    This is FAST because embeddings are already computed.
     """
-    if not known_images:
-        return "No images in dataset. Add .jpg/.jpeg/.png files to the 'dataset' folder."
-
-    best_match = None
-    best_distance = 1.0  # Lower = more similar (0 = identical)
+    if not known_embeddings:
+        return "No images in dataset. Add .jpg files to the dataset folder."
 
     try:
-        for db_img, name in zip(known_images, known_names):
-            result = DeepFace.verify(
-                img1_path=image_path,
-                img2_path=db_img,
-                model_name="VGG-Face",      # Fast and accurate
-                enforce_detection=False,    # Don't crash if no face found
-                distance_metric="cosine"
-            )
+        # Compute embedding for uploaded image only
+        upload_embedding = get_embedding(image_path)
 
-            if result["verified"] and result["distance"] < best_distance:
-                best_distance = result["distance"]
+        best_match = None
+        best_score = -1
+
+        for embedding, name in zip(known_embeddings, known_names):
+            score = cosine_similarity(upload_embedding, embedding)
+            if score > best_score:
+                best_score = score
                 best_match = name
 
-        if best_match:
-            confidence = round((1 - best_distance) * 100, 1)
+        # Threshold: score above 0.5 = match
+        if best_score > 0.5:
+            confidence = round(best_score * 100, 1)
             return f"{best_match} — {confidence}% match"
         else:
-            return "Unknown person — no match found in dataset"
+            return f"Unknown person (closest: {best_match}, {round(best_score * 100, 1)}%)"
 
     except Exception as e:
         return f"Recognition error: {str(e)}"

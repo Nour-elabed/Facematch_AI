@@ -13,11 +13,11 @@ export default function Upload() {
 
   // Check backend health on load
   useEffect(() => {
-    axios.get(`${API_URL}/health`, { timeout: 3000 })
+     axios.get(`${API_URL}/health`, { timeout: 3000 })
       .then(() => setBackendOnline(true))
       .catch(() => setBackendOnline(false));
   }, []);
-
+  
   const handleChange = (e) => {
     const selected = e.target.files[0];
     if (!selected) return;
@@ -57,7 +57,7 @@ export default function Upload() {
     try {
       const res = await axios.post(`${API_URL}/recognize`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        timeout: 120000, // 2 minutes — DeepFace can be slow on first run
+        timeout: 60000,  // 1 minute — DeepFace can be slow on first run
       });
 
       setResult(res.data.result);
