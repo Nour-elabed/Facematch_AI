@@ -5,6 +5,7 @@ function App() {
     <>
       <style>{`
         @keyframes spin {
+        
           to {
             transform: rotate(360deg);
           }
