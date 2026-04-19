@@ -38,6 +38,7 @@ export default function Upload() {
     const isVideo = selected.type.startsWith("video/");
     setFileType(isVideo ? "video" : "image");
     setPreview(URL.createObjectURL(selected));
+    
   };
 
   const handleChange = (e) => loadFile(e.target.files[0]);
