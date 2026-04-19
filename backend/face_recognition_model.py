@@ -81,4 +81,5 @@ def recognize_face(image_path: str) -> str:
             return f"Unknown person (closest: {best_match}, {round(best_score * 100, 1)}%)"
 
     except Exception as e:
+        
         return f"Recognition error: {str(e)}"
