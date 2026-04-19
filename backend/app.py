@@ -1,3 +1,4 @@
+#uvicorn app:app --reload --host 127.0.0.1 --port 8000
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import shutil
