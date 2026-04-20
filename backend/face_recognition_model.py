@@ -6,6 +6,7 @@ DATASET_PATH = "dataset"
 
 # Store precomputed embeddings instead of raw images
 known_embeddings = []
+
 known_names = []
 
 
