@@ -16,6 +16,7 @@ export default function Upload() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    
     const check = async () => {
       try {
         await axios.get(`${API_URL}/health`, { timeout: 10000 });
