@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
+
 async def lifespan(app: FastAPI):
     logger.info("=== FaceMatch AI starting up ===")
     load_dataset()
