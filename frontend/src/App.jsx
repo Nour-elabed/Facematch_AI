@@ -15,6 +15,7 @@ function App() {
           padding: 0;
           box-sizing: border-box;
         }
+          
         body {
           background: #f0f4ff;
         }
