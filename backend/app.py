@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("=== FaceMatch AI starting up ===")
     load_dataset()
+    
     logger.info("=== Ready to receive requests ===")
     yield
 
